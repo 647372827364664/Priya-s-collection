@@ -1,1 +1,57 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Priya's Collection</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Priya's Collection</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="products.html">Shop</a>
+            <a href="cart.html">Cart</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Shop Our Products</h2>
+        <div class="product-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <img src="assets/product1.jpg" alt="Product 1">
+                <h3>Classic Handbag</h3>
+                <p>Price: $49.99</p>
+                <button onclick="addToCart('Classic Handbag', 49.99)">Add to Cart</button>
+            </div>
+            <!-- Product 2 -->
+            <div class="product-card">
+                <img src="assets/product2.jpg" alt="Product 2">
+                <h3>Stylish Sunglasses</h3>
+                <p>Price: $19.99</p>
+                <button onclick="addToCart('Stylish Sunglasses', 19.99)">Add to Cart</button>
+            </div>
+            <!-- Product 3 -->
+            <div class="product-card">
+                <img src="assets/product3.jpg" alt="Product 3">
+                <h3>Elegant Watch</h3>
+                <p>Price: $99.99</p>
+                <button onclick="addToCart('Elegant Watch', 99.99)">Add to Cart</button>
+            </div>
+            <!-- Add more products as needed -->
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Priya's Collection. All rights reserved.</p>
+    </footer>
+    <script>
+        // Function to handle adding products to the cart
+        function addToCart(productName, productPrice) {
+            alert(`${productName} has been added to your cart for $${productPrice}!`);
+            // Extend this functionality to update the cart dynamically.
+        }
+    </script>
+</body>
+  </html>
