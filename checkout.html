@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Priya's Collection</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <header>
+        <h1>Priya's Collection</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="products.html">Shop</a>
+            <a href="cart.html">Cart</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Checkout</h2>
+        <form id="checkout-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" required></textarea>
+
+            <button id="stripe-button">Pay with Card</button>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; 2024 Priya's Collection. All rights reserved.</p>
+    </footer>
+    <script>
+        // Stripe Integration
+        const stripe = Stripe('your-publishable-key'); // Replace with your Stripe Publishable Key
+
+        document.getElementById('stripe-button').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const totalAmount = cart.reduce((sum, product) => sum + (product.price * product.quantity), 0);
+
+            const { token } = await stripe.createToken();
+
+            const response = await fetch('http://localhost:5000/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: totalAmount, token }),
+            });
+
+            if (response.ok) {
+                await fetch('http://localhost:5000/api/orders/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, address, products: cart, totalAmount }),
+                });
+
+                alert('Payment successful! Thank you for your order.');
+                localStorage.removeItem('cart');
+                window.location.href = 'index.html';
+            } else {
+                alert('Payment failed. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
