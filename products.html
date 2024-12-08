@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop - Priya's Collection</title>
+    <title>Cart - Priya's Collection</title>
     <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -17,41 +17,73 @@
         </nav>
     </header>
     <main>
-        <h2>Shop Our Products</h2>
-        <div class="product-grid">
-            <!-- Product 1 -->
-            <div class="product-card">
-                <img src="assets/product1.jpg" alt="Product 1">
-                <h3>Classic Handbag</h3>
-                <p>Price: $49.99</p>
-                <button onclick="addToCart('Classic Handbag', 49.99)">Add to Cart</button>
-            </div>
-            <!-- Product 2 -->
-            <div class="product-card">
-                <img src="assets/product2.jpg" alt="Product 2">
-                <h3>Stylish Sunglasses</h3>
-                <p>Price: $19.99</p>
-                <button onclick="addToCart('Stylish Sunglasses', 19.99)">Add to Cart</button>
-            </div>
-            <!-- Product 3 -->
-            <div class="product-card">
-                <img src="assets/product3.jpg" alt="Product 3">
-                <h3>Elegant Watch</h3>
-                <p>Price: $99.99</p>
-                <button onclick="addToCart('Elegant Watch', 99.99)">Add to Cart</button>
-            </div>
-            <!-- Add more products as needed -->
+        <h2>Your Cart</h2>
+        <div id="cart-container">
+            <!-- Cart items will be dynamically loaded -->
         </div>
+        <button id="clear-cart">Clear Cart</button>
     </main>
     <footer>
         <p>&copy; 2024 Priya's Collection. All rights reserved.</p>
     </footer>
     <script>
-        // Function to handle adding products to the cart
-        function addToCart(productName, productPrice) {
-            alert(`${productName} has been added to your cart for $${productPrice}!`);
-            // Extend this functionality to update the cart dynamically.
+        // Load cart from localStorage
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartContainer = document.getElementById('cart-container');
+
+            // If cart is empty
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<p>Your cart is empty.</p>';
+                return;
+            }
+
+            // Generate cart items
+            cartContainer.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cart.map((product, index) => `
+                            <tr>
+                                <td>${product.name}</td>
+                                <td>$${product.price.toFixed(2)}</td>
+                                <td>${product.quantity}</td>
+                                <td>$${(product.price * product.quantity).toFixed(2)}</td>
+                                <td>
+                                    <button onclick="removeFromCart(${index})">Remove</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <p><strong>Total: $${cart.reduce((sum, product) => sum + (product.price * product.quantity), 0).toFixed(2)}</strong></p>
+            `;
         }
+
+        // Remove product from cart
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1); // Remove product at the given index
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart(); // Reload cart
+        }
+
+        // Clear entire cart
+        document.getElementById('clear-cart').addEventListener('click', () => {
+            localStorage.removeItem('cart');
+            loadCart();
+        });
+
+        // Load cart on page load
+        window.onload = loadCart;
     </script>
 </body>
-  </html>
+</html>
