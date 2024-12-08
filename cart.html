@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Priya's Collection</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Priya's Collection</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="products.html">Shop</a>
+            <a href="cart.html">Cart</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Your Cart</h2>
+        <div id="cart-container">
+            <!-- Cart items will be dynamically loaded -->
+        </div>
+        <button id="clear-cart">Clear Cart</button>
+    </main>
+    <footer>
+        <p>&copy; 2024 Priya's Collection. All rights reserved.</p>
+    </footer>
+    <script>
+        // Load cart from localStorage
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartContainer = document.getElementById('cart-container');
+
+            // If cart is empty
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<p>Your cart is empty.</p>';
+                return;
+            }
+
+            // Generate cart items
+            cartContainer.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cart.map((product, index) => `
+                            <tr>
+                                <td>${product.name}</td>
+                                <td>$${product.price.toFixed(2)}</td>
+                                <td>${product.quantity}</td>
+                                <td>$${(product.price * product.quantity).toFixed(2)}</td>
+                                <td>
+                                    <button onclick="removeFromCart(${index})">Remove</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <p><strong>Total: $${cart.reduce((sum, product) => sum + (product.price * product.quantity), 0).toFixed(2)}</strong></p>
+            `;
+        }
+
+        // Remove product from cart
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1); // Remove product at the given index
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart(); // Reload cart
+        }
+
+        // Clear entire cart
+        document.getElementById('clear-cart').addEventListener('click', () => {
+            localStorage.removeItem('cart');
+            loadCart();
+        });
+
+        // Load cart on page load
+        window.onload = loadCart;
+    </script>
+</body>
+</html>
