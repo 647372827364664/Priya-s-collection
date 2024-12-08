@@ -18,10 +18,24 @@
     </header>
     <main>
         <h2>Your Cart</h2>
-        <div id="cart-container">
-            <!-- Cart items will be dynamically loaded -->
+        <div id="cart-container" class="cart-container">
+            <!-- Cart items dynamically loaded here -->
         </div>
-        <button id="clear-cart">Clear Cart</button>
+        <div id="checkout-form" class="checkout-form">
+            <h3>Checkout</h3>
+            <form id="checkout">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" required></textarea>
+                
+                <button type="submit">Place Order</button>
+            </form>
+        </div>
     </main>
     <footer>
         <p>&copy; 2024 Priya's Collection. All rights reserved.</p>
@@ -32,15 +46,15 @@
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             const cartContainer = document.getElementById('cart-container');
 
-            // If cart is empty
             if (cart.length === 0) {
                 cartContainer.innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('checkout-form').style.display = 'none';
                 return;
             }
 
-            // Generate cart items
+            // Display cart items
             cartContainer.innerHTML = `
-                <table>
+                <table class="cart-table">
                     <thead>
                         <tr>
                             <th>Product</th>
@@ -58,13 +72,13 @@
                                 <td>${product.quantity}</td>
                                 <td>$${(product.price * product.quantity).toFixed(2)}</td>
                                 <td>
-                                    <button onclick="removeFromCart(${index})">Remove</button>
+                                    <button onclick="removeFromCart(${index})" class="btn-remove">Remove</button>
                                 </td>
                             </tr>
                         `).join('')}
                     </tbody>
                 </table>
-                <p><strong>Total: $${cart.reduce((sum, product) => sum + (product.price * product.quantity), 0).toFixed(2)}</strong></p>
+                <p class="cart-total"><strong>Total: $${cart.reduce((sum, product) => sum + (product.price * product.quantity), 0).toFixed(2)}</strong></p>
             `;
         }
 
@@ -73,13 +87,22 @@
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             cart.splice(index, 1); // Remove product at the given index
             localStorage.setItem('cart', JSON.stringify(cart));
-            loadCart(); // Reload cart
+            loadCart();
         }
 
-        // Clear entire cart
-        document.getElementById('clear-cart').addEventListener('click', () => {
+        // Handle checkout form submission
+        document.getElementById('checkout').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+
+            alert(`Thank you for your order, ${name}! Your order will be delivered to ${address}.`);
+
+            // Clear cart and form
             localStorage.removeItem('cart');
             loadCart();
+            document.getElementById('checkout').reset();
         });
 
         // Load cart on page load
